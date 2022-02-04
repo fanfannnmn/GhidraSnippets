@@ -179,7 +179,7 @@ files = rootFolder.getFiles()
 
 print("The project '{}' has {} files in it:".format(projectName, fileCount))
 for file in files:
-	print("\t{}".format(file))
+    print("\t{}".format(file))
 ```
 
 <details>
@@ -232,7 +232,7 @@ Its location on disk is: '/C:/Users/username/Desktop/pcode/emulation/deobExample
 ```python
 blocks = currentProgram.getMemory().getBlocks()
 for block in blocks:
-	print("Name: {}, Size: {}".format(block.getName(), block.getSize()))
+    print("Name: {}, Size: {}".format(block.getName(), block.getSize()))
 ```
 
 <details>
@@ -291,7 +291,7 @@ while func is not None:
 # Method 2:
 fm = currentProgram.getFunctionManager()
 funcs = fm.getFunctions(True) # True means 'forward'
-for func in funcs: 
+for func in funcs:
     print("Function: {} @ 0x{}".format(func.getName(), func.getEntryPoint()))
 ```
 
@@ -358,7 +358,7 @@ name = "main"
 funcs = getGlobalFunctions(name)
 print("Found {} function(s) with the name '{}'".format(len(funcs), name))
 for func in funcs:
-	print("{} is located at 0x{}".format(func.getName(), func.getEntryPoint()))
+    print("{} is located at 0x{}".format(func.getName(), func.getEntryPoint()))
 ```
 
 <details>
@@ -379,12 +379,12 @@ Ghidra makes it easy to find all cross references to a function using `getRefere
 fm = currentProgram.getFunctionManager()
 funcs = fm.getFunctions(True)
 for func in funcs:
-  if func.getName() == "system":
-    print("\nFound 'system' @ 0x{}".format(func.getEntryPoint()))
-    entry_point = func.getEntryPoint()
-    references = getReferencesTo(entry_point)
-    for xref in references:
-      print(xref)
+    if func.getName() == "system":
+        print("\nFound 'system' @ 0x{}".format(func.getEntryPoint()))
+        entry_point = func.getEntryPoint()
+        references = getReferencesTo(entry_point)
+        for xref in references:
+            print(xref)
 ```
 
 <details>
@@ -496,9 +496,9 @@ undefined4 FUN_00056b58(void)
 	register_function(1, "core_Clear_Database", FUN_00058374);
 	register_function(1, "core_Auth_Database", FUN_00058584);
 	register_function(1, "core_Add_User_Database", FUN_00058650);
-	
+
 	// ... hundreds more in this function and in others ...
-	
+
 	return in_r3;
 }
 ```
@@ -511,13 +511,13 @@ from ghidra.app.decompiler import DecompInterface
 from ghidta.util.task import ConsoleTaskMonitor
 
 def getString(addr):
-	mem = currentProgram.getMemory()
-	core_name_str = ""
-	while True:
-		byte = mem.getByte(addr.add(len(core_name_str)))
-		if byte == 0:
-			return core_name_str
-		core_name_str += chr(byte)
+    mem = currentProgram.getMemory()
+    core_name_str = ""
+    while True:
+        byte = mem.getByte(addr.add(len(core_name_str)))
+        if byte == 0:
+            return core_name_str
+        core_name_str += chr(byte)
 
 # Get decompiler interface
 options = DecompileOptions()
@@ -531,41 +531,41 @@ fm = currentProgram.getFunctionManager()
 funcs = fm.getFunctions(True)
 register_function = None
 for func in funcs:
-	if func.getName() == "register_function":
-		register_function = func
-		break
+    if func.getName() == "register_function":
+        register_function = func
+        break
 
 # Get xrefs to "register_function"
 entry_point = register_function.getEntryPoint()
 xrefs = getReferencesTo(entry_point)
 callers = []
 for xref in xrefs:
-	from_addr = xref.getFromAddress()
-	caller = fm.getFunctionContaining(from_addr)
-	if caller not in callers:
-		callers.append(caller)
+    from_addr = xref.getFromAddress()
+    caller = fm.getFunctionContaining(from_addr)
+    if caller not in callers:
+        callers.append(caller)
 
 # Process callers (functions calling `register_function`)
 for caller in callers:
-	if not caller:
-		continue
-	res = ifc.decompileFunction(caller, 60, monitor)
-	hf = res.getHighFunction()
-	opiter = hf.getPcodeOps()
-	while opiter.hasNext():
-		op = opiter.next()
-		mnemonic = op.getMnemonic()
-		if mnemonic == "CALL":
-			call_target = op.getInput(0)
-			if call_target.getAddress == entry_point:
-				core_name = op.getInput(2)
-				core_func = op.getInput(3)
-				core_name_def = core_name.getDef()
-				core_name_addr = toAddr(core_name_def.getInput(0).getOffset())
-				core_string = getString(core_name_addr)
-				core_func_addr = toAddr(core_function.getDef().getInput(1).getOffset())
-				core_func_obj = fm.getFunctionAt(core_func_addr)
-				core_func_obj.setName(core_string, ghidra.program.model.symbol.SourceType.DEFAULT)
+    if not caller:
+        continue
+    res = ifc.decompileFunction(caller, 60, monitor)
+    hf = res.getHighFunction()
+    opiter = hf.getPcodeOps()
+    while opiter.hasNext():
+        op = opiter.next()
+        mnemonic = op.getMnemonic()
+        if mnemonic == "CALL":
+            call_target = op.getInput(0)
+            if call_target.getAddress == entry_point:
+                core_name = op.getInput(2)
+                core_func = op.getInput(3)
+                core_name_def = core_name.getDef()
+                core_name_addr = toAddr(core_name_def.getInput(0).getOffset())
+                core_string = getString(core_name_addr)
+                core_func_addr = toAddr(core_function.getDef().getInput(1).getOffset())
+                core_func_obj = fm.getFunctionAt(core_func_addr)
+                core_func_obj.setName(core_string, ghidra.program.model.symbol.SourceType.DEFAULT)
 ```
 
 <details>
@@ -580,9 +580,9 @@ undefined4 FUN_00056b58(void)
 	register_function(1, "core_Clear_Database", core_Clear_Database);
 	register_function(1, "core_Auth_Database", core_Auth_Database);
 	register_function(1, "core_Add_User_Database", core_Add_User_Database);
-	
+
 	// ... hundreds more in this function and in others ...
-	
+
 	return in_r3;
 }
 ```
@@ -607,7 +607,7 @@ addrSet = main_func.getBody()
 codeUnits = listing.getCodeUnits(addrSet, True) # true means 'forward'
 
 for codeUnit in codeUnits:
-	print("0x{} : {:16} {}".format(codeUnit.getAddress(), hexlify(codeUnit.getBytes()), codeUnit.toString()))
+    print("0x{} : {:16} {}".format(codeUnit.getAddress(), hexlify(codeUnit.getBytes()), codeUnit.toString()))
 ```
 
 <details>
@@ -688,7 +688,7 @@ for instruction in instructions:
 
 
 ### Count all mnemonics in a binary
-While recently preparing to teach some introductary x86, I wanted to know the most used mnemonics appearing in a given application to make sure I covered them. This is insanely easy to do in Binary Ninja, but a bit more involved in Ghidra. Essentially, we track mnemonics in a dictionary and increment the count as we process all instructions in a binary.  
+While recently preparing to teach some introductary x86, I wanted to know the most used mnemonics appearing in a given application to make sure I covered them. This is insanely easy to do in Binary Ninja, but a bit more involved in Ghidra. Essentially, we track mnemonics in a dictionary and increment the count as we process all instructions in a binary.
 
 This requires getting a `InstructionDB` and using the `getMnemonicString` method to determine the mnemonic of the native assembly instruction. At the end of this snippet, we copy/pasta code from StackOverflow to sort our collected data without really thinking about how it works and we call it a day. All joking aside, this is a pretty neat way to prioritize which instructions you should focus on learning if you're learning a new architecture and don't know where to begin.
 
@@ -737,7 +737,7 @@ for i,mnem in ins_sorted:
 ## Working with Variables
 
 ### Get a stack variable from a Varnode or VarnodeAST
-When working with refined PCode you'll almost exclusively be dealing with `VarnodeAST` or `PCodeOpAST` objects. Correlating these objects to stack variables is not something exposed by the Ghidra API (as far as I can tell in v9.2.2). This leads to a complex mess of taking a varnode and comparing it to the decompiler's stack variable symbols for a given function.  It's not intutitive, and quite frankly, it's been the most confusing and complex thing I've done with the Ghidra API to date. 
+When working with refined PCode you'll almost exclusively be dealing with `VarnodeAST` or `PCodeOpAST` objects. Correlating these objects to stack variables is not something exposed by the Ghidra API (as far as I can tell in v9.2.2). This leads to a complex mess of taking a varnode and comparing it to the decompiler's stack variable symbols for a given function.  It's not intutitive, and quite frankly, it's been the most confusing and complex thing I've done with the Ghidra API to date.
 
 This function works when you're passing a Varnode/AST of a simple variable, say something like this:
 
@@ -751,7 +751,7 @@ If you want to know what that the first argument (`local_88`) is named "local_88
 def get_stack_var_from_varnode(func, varnode):
     if type(varnode) not in [Varnode, VarnodeAST]:
         raise Exception("Invalid value. Expected `Varnode` or `VarnodeAST`, got {}.".format(type(varnode)))
-    
+
     bitness_masks = {
         '16': 0xffff,
         '32': 0xffffffff,
@@ -774,14 +774,14 @@ def get_stack_var_from_varnode(func, varnode):
                 unsigned_lv_offset = lv.getMinAddress().getUnsignedOffset() & bitmask
                 if unsigned_lv_offset == defop_input_offset:
                     return lv
-        
+
         # If we get here, varnode is likely a "acStack##" variable.
         hf = get_high_function(func)
         lsm = hf.getLocalSymbolMap()
         for vndef_input in vndef_inputs:
             defop_input_offset = vndef_input.getAddress().getOffset() & bitmask
             for symbol in lsm.getSymbols():
-                if symbol.isParameter(): 
+                if symbol.isParameter():
                     continue
                 if defop_input_offset == symbol.getStorage().getFirstVarnode().getOffset() & bitmask:
                     return symbol
@@ -811,7 +811,7 @@ def get_stack_var_from_varnode(func, varnode):
 
 
 ### Get stack variables from a PcodeOpAST
-If you took a look at the code under the section "Get a stack variable from a Varnode or VarnodeAST", you'll probably be asking why that code works for something like: `memset(local_88,0,0x10);` but it fails for `strchr((char *)local_a8,10);`. The reason is that `local_88` is a `VarnodeAST` while `(char *)local_a8` is a `PcodeOpAST`. In other words, the `local_a8` varnode is "wrapped" inside of a `PcodeOpAST` and you can't associate it to any kind of meaningful value without first "unwrapping" it. Of course, a wrapped `VarnodeAST` could be wrapped in numerous `CAST` operations and `INT_ADD` operations, etc.  So how do we handle this? Recursion. * shudder *. 
+If you took a look at the code under the section "Get a stack variable from a Varnode or VarnodeAST", you'll probably be asking why that code works for something like: `memset(local_88,0,0x10);` but it fails for `strchr((char *)local_a8,10);`. The reason is that `local_88` is a `VarnodeAST` while `(char *)local_a8` is a `PcodeOpAST`. In other words, the `local_a8` varnode is "wrapped" inside of a `PcodeOpAST` and you can't associate it to any kind of meaningful value without first "unwrapping" it. Of course, a wrapped `VarnodeAST` could be wrapped in numerous `CAST` operations and `INT_ADD` operations, etc.  So how do we handle this? Recursion. * shudder *.
 
 Fair warning, recursion is my computer science nemisis. If you look at this code and think "this is odd" - you're probably right!
 
@@ -829,7 +829,7 @@ def get_vars_from_varnode(func, node, variables=None):
     # We must use `getDef()` on VarnodeASTs
     if type(node) == VarnodeAST:
         # For `get_stack_var_from_varnode` see:
-        # https://github.com/HackOvert/GhidraSnippets 
+        # https://github.com/HackOvert/GhidraSnippets
         # Ctrl-F for "get_stack_var_from_varnode"
         var = get_stack_var_from_varnode(func, node)
         if var and type(var) != HighSymbol:
@@ -899,11 +899,11 @@ while(blocks.hasNext()):
 
 ```
 Basic block details for function 'main':
-	[*] 00100690 
-	[*] 001006b1 -> 00100700 
-	[*] 001006fc -> 00100700 
-	[*] 00100709 -> 001006b3 
-	[*] 00100709 -> 0010070b 
+	[*] 00100690
+	[*] 001006b1 -> 00100700
+	[*] 001006fc -> 00100700
+	[*] 00100709 -> 001006b3
+	[*] 00100709 -> 0010070b
 ```
 </details>
 
@@ -942,7 +942,7 @@ undefined8 main(void)
   undefined8 uVar2;
   uint local_20;
   undefined1 *local_18;
-  
+
   local_18 = data;
   local_20 = 0;
   while (*local_18 != '\0') {
@@ -971,7 +971,7 @@ undefined8 func(int param_1,int param_2)
   uint auStack88 [8];
   undefined4 auStack56 [10];
   long local_10;
-  
+
   local_10 = *(long *)(in_FS_OFFSET + 0x28);
   auStack56[param_1] = 1;
   printf("%d\n",(ulong)auStack88[param_2]);
@@ -1111,12 +1111,12 @@ addrSet = func.getBody()
 codeUnits = listing.getCodeUnits(addrSet, True)
 
 for codeUnit in codeUnits:
-	deol = DisplayableEol(codeUnit, True, True, True, True, 5, True)
-	if deol.hasAutomatic():
-		ac = deol.getAutomaticComment()
-		print(type(ac))
-		print(ac)
-		print(ac[0])
+    deol = DisplayableEol(codeUnit, True, True, True, True, 5, True)
+    if deol.hasAutomatic():
+        ac = deol.getAutomaticComment()
+        print(type(ac))
+        print(ac)
+        print(ac[0])
 ```
 
 <details>
@@ -1142,15 +1142,15 @@ fm = currentProgram.getFunctionManager()
 listing = currentProgram.getListing()
 funcs = fm.getFunctions(True) # True means iterate forward
 
-comment_types = { 
-    0: 'EOL', 
-    1: 'PRE', 
+comment_types = {
+    0: 'EOL',
+    1: 'PRE',
     2: 'POST',
     3: 'PLATE',
     4: 'REPEATABLE',
 }
 
-for func in funcs: 
+for func in funcs:
     addrSet = func.getBody()
     codeUnits = listing.getCodeUnits(addrSet, True)
     for codeUnit in codeUnits:
@@ -1231,7 +1231,7 @@ def main():
     # Here's a list of all the registers we want printed after each
     # instruction. Modify this as you see fit, based on your architecture.
     reg_filter = [
-        "RIP", "RAX", "RBX", "RCX", "RDX", "RSI", "RDI", 
+        "RIP", "RAX", "RBX", "RCX", "RDX", "RSI", "RDI",
         "RSP", "RBP", "rflags"
     ]
 
@@ -1241,7 +1241,7 @@ def main():
     emuHelper.writeRegister("RAX", 0x20)
     emuHelper.writeRegister("RSP", 0x000000002FFF0000)
     emuHelper.writeRegister("RBP", 0x000000002FFF0000)
-    
+
     # There are a couple of ways to write memory, use `writeMemoryValue` if you want
     # to set a small typed value (e.g. uint64). Use `writeMemory` if you're mapping in
     # a lot of memory (e.g. from a debugger memory dump). Note that each of these
@@ -1258,11 +1258,11 @@ def main():
 
     print("Emulation starting at 0x{}".format(mainFunctionEntry))
     while monitor.isCancelled() is False:
-        
+
         # Check the current address in the program counter, if it's
         # zero (our `CONTROLLED_RETURN_OFFSET` value) stop emulation.
         # Set this to whatever end target you want.
-        executionAddress = emuHelper.getExecutionAddress()  
+        executionAddress = emuHelper.getExecutionAddress()
         if (executionAddress == controlledReturnAddr):
             print("Emulation complete.")
             return
@@ -1346,7 +1346,7 @@ Address: 0x00100698 (MOV dword ptr [RBP + -0x24],EDI)
 
 
 ### Dumping Raw PCode
-PCode exists in two primary forms you as a user should consider, "raw" and "refined".  In documentation both forms are simply referred to as "PCode" making it confusing to talk about - so I distinguish between the forms using raw and refined. Just know theses are not universally accepted terms. 
+PCode exists in two primary forms you as a user should consider, "raw" and "refined".  In documentation both forms are simply referred to as "PCode" making it confusing to talk about - so I distinguish between the forms using raw and refined. Just know theses are not universally accepted terms.
 
 So raw PCode is the first pass, and the form that's displayed in the "Listing" pane inside the Ghidra UI.  It's extremely verbose and explicit. This is the form you want to use when emulating, if you're writing a symbolic executor, or anything of the sort.  If you want details from the decompiler passes, you want to analyze refined PCode, not this stuff!  So what does it look like and how do you access it? Let's take a look.
 
@@ -1363,7 +1363,7 @@ def dump_raw_pcode(func):
             print("  {}".format(entry))
 
 func = getGlobalFunctions("main")[0]    # assumes only one function named `main`
-dump_raw_pcode(func)            	    # dump raw pcode as strings
+dump_raw_pcode(func)                    # dump raw pcode as strings
 ```
 
 <details>
@@ -1595,7 +1595,7 @@ RET
 
 
 ### Dumping Refined PCode
-PCode exists in two primary forms you as a user should consider, "raw" and "refined".  In documentation both forms are simply referred to as "PCode" making it confusing to talk about - so I distinguish between the forms using raw and refined. Just know theses are not universally accepted terms. 
+PCode exists in two primary forms you as a user should consider, "raw" and "refined".  In documentation both forms are simply referred to as "PCode" making it confusing to talk about - so I distinguish between the forms using raw and refined. Just know theses are not universally accepted terms.
 
 So refined PCode is heavily processed. It highly relates to the output you see in the decompiler, and if you're interested in making use of the Ghidra decompiler passes, this is the form of PCode you'll want to analyze. There are many interesting aspects of refined PCode we do not cover here, including `unique` values and name spaces. Just know that what might appear to be simple has a lot of analysis backing it and digging into these refined PCode elements are worth your time.
 
@@ -1612,7 +1612,7 @@ def get_high_function(func):
     ifc.openProgram(getCurrentProgram())
     # Setting a simplification style will strip useful `indirect` information.
     # Please don't use this unless you know why you're using it.
-    #ifc.setSimplificationStyle("normalize") 
+    #ifc.setSimplificationStyle("normalize")
     res = ifc.decompileFunction(func, 60, monitor)
     high = res.getHighFunction()
     return high
@@ -1622,7 +1622,7 @@ def dump_refined_pcode(func, high_func):
     while opiter.hasNext():
         op = opiter.next()
         print("{}".format(op.toString()))
-        
+
 # == run examples =================================================================================
 func = getGlobalFunctions("main")[0]    # assumes only one function named `main`
 hf = get_high_function(func)            # we need a high function from the decompiler
@@ -1887,9 +1887,9 @@ Nodes: 47, Edges: 48
 ## Working with Graphs
 
 ### Creating a Call Graph
-Ghidra's complex API allows for the creation of various graph structures including directional graphs (digraphs). This example shows how to create a DiGraph of vertices (functions) and edges (calls from/to). 
+Ghidra's complex API allows for the creation of various graph structures including directional graphs (digraphs). This example shows how to create a DiGraph of vertices (functions) and edges (calls from/to).
 
-Note that adding a vertex or an edge between two vertex entries does not reuse or override them! This is because, while many nodes share the same name, they contain unique hash codes (keys). If you were looking to trim this graph to include only unqiue nodes, you would need to consider both the name of the symbol and its address to account for overridden functions. 
+Note that adding a vertex or an edge between two vertex entries does not reuse or override them! This is because, while many nodes share the same name, they contain unique hash codes (keys). If you were looking to trim this graph to include only unqiue nodes, you would need to consider both the name of the symbol and its address to account for overridden functions.
 
 In its current form, this DiGraph is unlikely to be of any use to you. But the building blocks of creating interesting control flow graphs (CFG), program dependence graphs (PDG), data dependency graphs (DDG), and other graphs are all here.
 
@@ -1906,41 +1906,41 @@ listing = currentProgram.getListing()
 fm = currentProgram.getFunctionManager()
 
 funcs = fm.getFunctions(True) # True mean iterate forward
-for func in funcs: 
-	# Add function vertices
-	print("Function: {} @ 0x{}".format(func.getName(), func.getEntryPoint())) # FunctionDB
-	digraph.add(Vertex(func))
-	
-	# Add edges for static calls
-	entryPoint = func.getEntryPoint()
-	instructions = listing.getInstructions(entryPoint, True)
-	for instruction in instructions:
-		addr = instruction.getAddress()
-		oper = instruction.getMnemonicString()
-		if oper == "CALL":
-			print("    0x{} : {}".format(addr, instruction))
-			flows = instruction.getFlows()
-			if len(flows) == 1:
-				target_addr = "0x{}".format(flows[0])
-				digraph.add(Edge(Vertex(func), Vertex(fm.getFunctionAt(getAddress(target_addr)))))
+for func in funcs:
+    # Add function vertices
+    print("Function: {} @ 0x{}".format(func.getName(), func.getEntryPoint())) # FunctionDB
+    digraph.add(Vertex(func))
+
+    # Add edges for static calls
+    entryPoint = func.getEntryPoint()
+    instructions = listing.getInstructions(entryPoint, True)
+    for instruction in instructions:
+        addr = instruction.getAddress()
+        oper = instruction.getMnemonicString()
+        if oper == "CALL":
+            print("    0x{} : {}".format(addr, instruction))
+            flows = instruction.getFlows()
+            if len(flows) == 1:
+                target_addr = "0x{}".format(flows[0])
+                digraph.add(Edge(Vertex(func), Vertex(fm.getFunctionAt(getAddress(target_addr)))))
 
 print("DiGraph info:")
 edges = digraph.edgeIterator()
 while edges.hasNext():
-	edge = edges.next()
-	from_vertex = edge.from()
-	to_vertex = edge.to()
-	print("  Edge from {} to {}".format(from_vertex, to_vertex))
+    edge = edges.next()
+    from_vertex = edge.from()
+    to_vertex = edge.to()
+    print("  Edge from {} to {}".format(from_vertex, to_vertex))
 
 vertices = digraph.vertexIterator()
 while vertices.hasNext():
-	vertex = vertices.next()
-	print("  Vertex: {} (key: {})".format(vertex, vertex.key()))
+    vertex = vertices.next()
+    print("  Vertex: {} (key: {})".format(vertex, vertex.key()))
     # some extra stuff you might want to see
-	#print("    type(vertex):      {}".format(type(vertex)))
-	#print("    vertex.hashCode(): {}".format(vertex.hashCode()))
-	#print("    vertex.referent(): {}".format(vertex.referent()))
-	#print("    type(referent):    {}".format(type(vertex.referent())))
+    #print("    type(vertex):      {}".format(type(vertex)))
+    #print("    vertex.hashCode(): {}".format(vertex.hashCode()))
+    #print("    vertex.referent(): {}".format(vertex.referent()))
+    #print("    type(referent):    {}".format(type(vertex.referent())))
 ```
 
 <details>
